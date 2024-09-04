@@ -1,16 +1,10 @@
 "use client";
 import authApiRequest from "@/apiRequest/auth";
-import {
-  checkAndRefreshToken,
-  getAccessTokenFromLocalStorage,
-  getRefreshTokenFromLocalStorage,
-  setAccessTokenToLocalStorage,
-  setRefreshTokenToLocalStorage,
-} from "@/lib/utils";
+import { checkAndRefreshToken } from "@/lib/utils";
 import { decode } from "jsonwebtoken";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-const UAUTHENTICATED_PATH = ["/login", "/register", "/refresh-token", "/"];
+const UAUTHENTICATED_PATH = ["/login", "/register", "/refresh-token"];
 function RefreshToken() {
   const router = useRouter();
   const pathNameUrl = usePathname();

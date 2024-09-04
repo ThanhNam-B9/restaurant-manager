@@ -58,11 +58,18 @@ export const useAddEmployee = () => {
     });
   }
 };
-export const useGetEmployee = ({ id }: { id: string }) => {
+export const useGetEmployee = ({
+  id,
+  enabled,
+}: {
+  id: number;
+  enabled: boolean;
+}) => {
   {
     return useQuery({
       queryKey: ["emmployee", id],
-      queryFn: accountApiRequest.listEmployees,
+      queryFn: () => accountApiRequest.getEmployee({ id }),
+      enabled,
     });
   }
 };
@@ -75,11 +82,12 @@ export const useUpdateEmployee = () => {
         body,
       }: {
         body: UpdateEmployeeAccountBodyType;
-        id: string;
+        id: number;
       }) => accountApiRequest.updateEmployee(body, id),
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ["emmployees"],
+          exact: true,
         });
       },
     });

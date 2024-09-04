@@ -5,6 +5,10 @@ import { EntityError } from "./http";
 import { toast } from "@/components/ui/use-toast";
 import { decode } from "jsonwebtoken";
 import authApiRequest from "@/apiRequest/auth";
+import { DishStatus, OrderStatus, Role, TableStatus } from "@/constants/type";
+import evnClientConfig from "@/config";
+import { TokenPayload } from "@/app/types/jwt.types";
+import guestApiRequest from "@/apiRequest/guest";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,6 +44,18 @@ export const handleErrorApi = ({
     });
   }
 };
+export const getVietnameseDishStatus = (
+  status: (typeof DishStatus)[keyof typeof DishStatus]
+) => {
+  switch (status) {
+    case DishStatus.Available:
+      return "Có sẵn";
+    case DishStatus.Unavailable:
+      return "Không có sẵn";
+    default:
+      return "Ẩn";
+  }
+};
 const isBrowser = typeof window !== "undefined";
 export const removeAccessAndRefreshTokenInLocalStorage = () => {
   if (isBrowser) {
@@ -68,21 +84,14 @@ export const checkAndRefreshToken = async (params?: {
   const refreshToken = getRefreshTokenFromLocalStorage();
   /// Chưa đăng nhập thì không cho chạy
   if (!refreshToken || !accessToken) return;
-  const { exp: expAccesToken, iat: iatAccessToken } = decode(accessToken) as {
-    exp: number;
-    iat: number;
-  };
-  const { exp: expRefreshToken } = decode(refreshToken) as {
-    exp: number;
-    iat: number;
-  };
+  const { exp: expAccesToken, iat: iatAccessToken } = decodeToken(accessToken);
+  const { exp: expRefreshToken, role } = decodeToken(refreshToken);
   // THời điểm hết hạn của token là tính theo epoch time (s)
   // Còn khi các bạn dùng cú pháp new Date().getTime() thì nó sẽ trả về epoch time (ms)
   const now = new Date().getTime() / 1000 - 1;
   // Trường hợp refresh token hết hạn thì cũng không xử lý nữa
   if (expRefreshToken <= now) {
     removeAccessAndRefreshTokenInLocalStorage();
-
     params?.onError && params.onError();
   }
   // Ví dụ thời gian hết hạn của access token là 10s
@@ -91,7 +100,10 @@ export const checkAndRefreshToken = async (params?: {
   // thời gian hết hạn của access token là : expAccesToken - iatAccessToken
   if (expAccesToken - now <= (expAccesToken - iatAccessToken) / 3) {
     try {
-      const res = await authApiRequest.refreshToken();
+      const res =
+        role === Role.Guest
+          ? await guestApiRequest.refreshToken()
+          : await authApiRequest.refreshToken();
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
       setAccessTokenToLocalStorage(res.payload.data.accessToken);
       params?.onSuccess && params.onSuccess();
@@ -99,4 +111,56 @@ export const checkAndRefreshToken = async (params?: {
       params?.onError && params.onError();
     }
   }
+};
+export const formatCurrency = (number: number) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(number);
+};
+export const getVietnameseTableStatus = (
+  status: (typeof TableStatus)[keyof typeof TableStatus]
+) => {
+  switch (status) {
+    case TableStatus.Available:
+      return "Có sẵn";
+    case TableStatus.Reserved:
+      return "Đã đặt";
+    default:
+      return "Ẩn";
+  }
+};
+export const getVietnameseOrderStatus = (
+  status: (typeof OrderStatus)[keyof typeof OrderStatus]
+) => {
+  switch (status) {
+    case OrderStatus.Pending:
+      return "Chờ xử lý";
+    case OrderStatus.Processing:
+      return "Đang nấu";
+    case OrderStatus.Delivered:
+      return "Đã phục vụ";
+    case OrderStatus.Paid:
+      return "Đã thanh toán";
+    default:
+      return "Đã từ chối";
+  }
+};
+export const getTableLink = ({
+  token,
+  tableNumber,
+}: {
+  token: string;
+  tableNumber: number;
+}) => {
+  return (
+    evnClientConfig.NEXT_PUBLIC_URL +
+    "/tables/" +
+    tableNumber +
+    "?token=" +
+    token
+  );
+};
+export const decodeToken = (token: string) => {
+  return decode(token) as TokenPayload;
 };

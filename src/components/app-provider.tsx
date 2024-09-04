@@ -10,9 +10,11 @@ import {
   useState,
 } from "react";
 import {
+  decodeToken,
   getAccessTokenFromLocalStorage,
   removeAccessAndRefreshTokenInLocalStorage,
 } from "@/lib/utils";
+import { RoleType } from "@/app/types/jwt.types";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -24,8 +26,8 @@ const queryClient = new QueryClient({
   },
 });
 const AppContext = createContext({
-  isAuth: false,
-  setAuth: (value: boolean) => {},
+  isRoles: undefined as RoleType | undefined,
+  setRoles: (value?: RoleType | undefined) => {},
 });
 export const useAppContext = () => {
   const context = useContext(AppContext);
@@ -36,18 +38,17 @@ export default function AppProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isAuth, setAuthState] = useState(false);
+  const [isRoles, setRolesState] = useState<RoleType | undefined>();
   useEffect(() => {
     const accessToken = getAccessTokenFromLocalStorage();
     if (accessToken) {
-      setAuthState(true);
+      const { role } = decodeToken(accessToken);
+      setRolesState(role);
     }
   }, []);
-  const setAuth = useCallback((isCheckAuth: boolean) => {
-    if (isCheckAuth) {
-      setAuthState(true);
-    } else {
-      setAuthState(false);
+  const setRoles = useCallback((role?: RoleType | undefined) => {
+    setRolesState(role);
+    if (!role) {
       removeAccessAndRefreshTokenInLocalStorage();
     }
   }, []);
@@ -55,7 +56,7 @@ export default function AppProvider({
   return (
     // Provide the client to your App
     //Nếu dùng react 19 và  next 15 thì không còn .Provider
-    <AppContext.Provider value={{ isAuth, setAuth }}>
+    <AppContext.Provider value={{ isRoles, setRoles }}>
       <QueryClientProvider client={queryClient}>
         {children}
         <RefreshToken />

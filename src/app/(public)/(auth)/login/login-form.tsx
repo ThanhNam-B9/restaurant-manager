@@ -15,10 +15,7 @@ import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/queries/useAuth";
 import { toast } from "@/components/ui/use-toast";
-import {
-  handleErrorApi,
-  removeAccessAndRefreshTokenInLocalStorage,
-} from "@/lib/utils";
+import { handleErrorApi } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useAppContext } from "@/components/app-provider";
@@ -26,25 +23,24 @@ import { useAppContext } from "@/components/app-provider";
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const router = useRouter();
-  const { setAuth } = useAppContext();
+  const { setRoles } = useAppContext();
   const searchParams = useSearchParams();
   const clearToken = searchParams.get("clearToken");
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
       email: "admin@order.com",
-      password: "123456",
+      password: "1234567",
     },
   });
   const onSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;
     try {
-      console.log("abc", data);
       const result = await loginMutation.mutateAsync(data);
       toast({
         description: result.payload.message,
       });
-      setAuth(true);
+      setRoles(result.payload.data.account.role);
       router.push("/");
     } catch (error: any) {
       handleErrorApi({
@@ -55,9 +51,9 @@ export default function LoginForm() {
   };
   useEffect(() => {
     if (clearToken) {
-      setAuth(false);
+      setRoles();
     }
-  }, [clearToken, setAuth]);
+  }, [clearToken, setRoles]);
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>

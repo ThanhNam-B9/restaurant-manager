@@ -24,7 +24,7 @@ import { useAppContext } from "@/components/app-provider";
 export default function DropdownAvatar() {
   const router = useRouter();
   const logoutMatation = useLogoutMutation();
-  const { setAuth } = useAppContext();
+  const { setRoles } = useAppContext();
 
   const { data } = useAccountMe();
   //   (res) => {
@@ -34,7 +34,7 @@ export default function DropdownAvatar() {
   const logout = async () => {
     try {
       const { payload } = await logoutMatation.mutateAsync();
-      setAuth(false);
+      setRoles();
       router.push("/");
       toast({
         description: payload.message,

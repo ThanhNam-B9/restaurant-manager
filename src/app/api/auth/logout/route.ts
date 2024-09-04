@@ -23,15 +23,14 @@ export async function POST(request: Request) {
       }
     );
   }
+
   const body = {
     refreshToken,
     accessToken,
   };
   try {
     const res = await authApiRequest.slogout(body);
-    if (res.status === 200) {
-    }
-
+    console.log("asss", res);
     return Response.json(res.payload);
   } catch (error) {
     if (error instanceof HttpError) {

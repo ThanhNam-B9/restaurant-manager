@@ -22,6 +22,8 @@ function RefreshToken() {
     ) {
       checkAndRefreshToken({
         onSuccess: () => {
+          console.log("sss", redirectParamUrl);
+
           router.push(redirectParamUrl || "/");
         },
       });

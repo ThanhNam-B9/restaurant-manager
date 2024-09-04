@@ -18,7 +18,7 @@ const accountApiRequest = {
       },
     }),
   uploadAvatar: (body: FormData) =>
-    http.post<UploadImageResType>(`${ACCOUNTPATH}/media/upload`, body),
+    http.post<UploadImageResType>("/media/upload", body),
   updateMe: (body: UpdateMeBodyType) =>
     http.put<AccountResType>(`${ACCOUNTPATH}/me`, body),
   changePassword: (body: ChangePasswordBodyType) =>
@@ -26,11 +26,11 @@ const accountApiRequest = {
   listEmployees: () => http.get<AccountListResType>(ACCOUNTPATH),
   addEmployee: (body: CreateEmployeeAccountBodyType) =>
     http.post<AccountResType>(ACCOUNTPATH, body),
-  getEmployee: (id: string) =>
+  getEmployee: ({ id }: { id: number }) =>
     http.get<AccountResType>(`${ACCOUNTPATH}/detail/${id}`),
-  updateEmployee: (body: UpdateEmployeeAccountBodyType, id: string) =>
+  updateEmployee: (body: UpdateEmployeeAccountBodyType, id: number) =>
     http.put<AccountResType>(`${ACCOUNTPATH}/detail/${id}`, body),
-  deteleEmployee: (id: string) =>
+  deteleEmployee: (id: number) =>
     http.delete<AccountResType>(`${ACCOUNTPATH}/detail/${id}`),
 };
 export default accountApiRequest;
