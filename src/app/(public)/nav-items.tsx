@@ -1,6 +1,6 @@
 "use client";
 import { RoleType } from "@/app/types/jwt.types";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 import { toast } from "@/components/ui/use-toast";
 import { Role } from "@/constants/type";
 import { getAccessTokenFromLocalStorage, handleErrorApi } from "@/lib/utils";
@@ -60,7 +60,9 @@ export default function NavItems({ className }: { className?: string }) {
   // console.log("accessToken", accessToken);
   const router = useRouter();
   const logoutMatation = useLogoutMutation();
-  const { isRoles, setRoles } = useAppContext();
+  // const { isRoles, setRoles } = ();
+  const isRoles = useAppStore((state) => state.isRoles);
+  const setRoles = useAppStore((state) => state.setRoles);
   const logout = async () => {
     try {
       const { payload } = await logoutMatation.mutateAsync();

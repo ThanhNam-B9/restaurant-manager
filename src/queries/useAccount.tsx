@@ -2,6 +2,7 @@ import accountApiRequest from "@/apiRequest/account";
 import {
   ChangePasswordBodyType,
   CreateEmployeeAccountBodyType,
+  GetGuestListQueryParamsType,
   UpdateEmployeeAccountBodyType,
   UpdateMeBodyType,
 } from "@/schemaValidations/account.schema";
@@ -105,6 +106,21 @@ export const useDeleteEmployee = () => {
           queryKey: ["emmployees"],
         });
       },
+    });
+  }
+};
+export const useGetGuestList = (queryParams: GetGuestListQueryParamsType) => {
+  {
+    return useQuery({
+      queryKey: ["guests", queryParams],
+      queryFn: () => accountApiRequest.getListGuest(queryParams),
+    });
+  }
+};
+export const useCreateGuest = () => {
+  {
+    return useMutation({
+      mutationFn: accountApiRequest.createGuest,
     });
   }
 };

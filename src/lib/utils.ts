@@ -9,6 +9,10 @@ import { DishStatus, OrderStatus, Role, TableStatus } from "@/constants/type";
 import evnClientConfig from "@/config";
 import { TokenPayload } from "@/app/types/jwt.types";
 import guestApiRequest from "@/apiRequest/guest";
+import { io } from "socket.io-client";
+import slugify from "slugify";
+import { format } from "date-fns";
+import { BookX, CookingPot, HandCoins, Loader, Truck } from "lucide-react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -163,4 +167,60 @@ export const getTableLink = ({
 };
 export const decodeToken = (token: string) => {
   return decode(token) as TokenPayload;
+};
+export function removeAccents(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
+export const simpleMatchText = (fullText: string, matchText: string) => {
+  return removeAccents(fullText.toLowerCase()).includes(
+    removeAccents(matchText.trim().toLowerCase())
+  );
+};
+
+export const formatDateTimeToLocaleString = (date: string | Date) => {
+  return format(
+    date instanceof Date ? date : new Date(date),
+    "HH:mm:ss dd/MM/yyyy"
+  );
+};
+
+export const OrderStatusIcon = {
+  [OrderStatus.Pending]: Loader,
+  [OrderStatus.Processing]: CookingPot,
+  [OrderStatus.Rejected]: BookX,
+  [OrderStatus.Delivered]: Truck,
+  [OrderStatus.Paid]: HandCoins,
+};
+
+export const formatDateTimeToTimeString = (date: string | Date) => {
+  return format(date instanceof Date ? date : new Date(date), "HH:mm:ss");
+};
+
+export const getConnectSocketInstan = (accessToken: string) => {
+  return io(evnClientConfig.NEXT_PUBLIC_API_ENDPOINT, {
+    auth: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const wrapServerApi = async <T>(fn: () => Promise<T>) => {
+  let result = null;
+  try {
+    result = await fn();
+  } catch (error: any) {
+    // try catch mà có redirect thì sẽ bị lỗi NEXT_REDIRECT do try catch vẫn cho page đó chạy return
+    // nên 1 phải dòng này để nó throww hay là không dùng try cacth
+    if (error.digest.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+  }
+  return result;
+};
+export const generateSlugUrl = ({ name, id }: { name: string; id: number }) => {
+  return `${slugify(name)}-i.${id}`;
 };

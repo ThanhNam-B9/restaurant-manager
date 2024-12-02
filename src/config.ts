@@ -18,3 +18,7 @@ if (!configProjects.success) {
 const evnClientConfig = configProjects.data;
 export default evnClientConfig;
 // Chia client vớ server ra config riêng
+export type Locale = (typeof locales)[number];
+
+export const locales = ["en", "vi"] as const;
+export const defaultLocale: Locale = "vi";

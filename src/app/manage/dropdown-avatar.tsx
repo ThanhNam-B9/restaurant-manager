@@ -15,7 +15,7 @@ import { handleErrorApi } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { useAccountMe } from "@/queries/useAccount";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 
 // const account = {
 //   name: "Nguyễn Văn A",
@@ -24,7 +24,8 @@ import { useAppContext } from "@/components/app-provider";
 export default function DropdownAvatar() {
   const router = useRouter();
   const logoutMatation = useLogoutMutation();
-  const { setRoles } = useAppContext();
+  // const { setRoles } = ();
+  const setRoles = useAppStore((state) => state.setRoles);
 
   const { data } = useAccountMe();
   //   (res) => {

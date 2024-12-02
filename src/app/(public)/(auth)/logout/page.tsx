@@ -1,5 +1,5 @@
 "use client";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 import {
   getAccessTokenFromLocalStorage,
   getRefreshTokenFromLocalStorage,
@@ -13,7 +13,8 @@ function Logout() {
   const searchParams = useSearchParams();
   const refreshTokenParamsUrl = searchParams.get("refreshToken");
   const accessTokenParamUrl = searchParams.get("accessToken");
-  const { setRoles } = useAppContext();
+  // const { setRoles } = ();
+  const setRoles = useAppStore((state) => state.setRoles);
   const { mutateAsync } = useLogoutMutation();
   useEffect(() => {
     if (

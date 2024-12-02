@@ -1,20 +1,13 @@
 import dishesApiRequest from "@/apiRequest/dishes";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, wrapServerApi } from "@/lib/utils";
 import { useDishesList } from "@/queries/useDish";
 import { DishListResType } from "@/schemaValidations/dish.schema";
 import Image from "next/image";
 
 export default async function Home() {
-  let dataListDish: DishListResType["data"] = [];
+  const data = await wrapServerApi(() => dishesApiRequest.getDishList());
+  const dataListDish = data?.payload.data || [];
 
-  try {
-    const res = await dishesApiRequest.getDishList();
-
-    const {
-      payload: { data },
-    } = res;
-    dataListDish = data;
-  } catch (error) {}
   return (
     <div className="w-full space-y-4">
       <div className="relative">

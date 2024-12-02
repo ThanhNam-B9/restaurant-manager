@@ -12,17 +12,19 @@ import {
 } from "@/schemaValidations/guest.schema";
 import { useGuestLoginMutation } from "@/queries/useGuest";
 import { useParams, useSearchParams } from "next/navigation";
-import { handleErrorApi } from "@/lib/utils";
+import { getConnectSocketInstan, handleErrorApi } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 
 export default function GuestLoginForm() {
   const searchParams = useSearchParams();
   const guestLoginMutation = useGuestLoginMutation();
   const tokenParams = searchParams.get("token");
   const router = useRouter();
-  const { setRoles } = useAppContext();
+  // const { setRoles } = ();
+  const setRoles = useAppStore((state) => state.setRoles);
+  const setSocket = useAppStore((state) => state.setSocket);
 
   const { number } = useParams<{ number: string }>();
   const numberTable = Number(number);
@@ -44,6 +46,7 @@ export default function GuestLoginForm() {
         description: res.payload.message,
       });
       setRoles(res.payload.data.guest.role);
+      setSocket(getConnectSocketInstan(res.payload.data.accessToken));
       router.push("/guest/menu");
     } catch (error) {
       handleErrorApi({

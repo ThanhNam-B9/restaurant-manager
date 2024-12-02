@@ -15,15 +15,16 @@ import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/queries/useAuth";
 import { toast } from "@/components/ui/use-toast";
-import { handleErrorApi } from "@/lib/utils";
+import { getConnectSocketInstan, handleErrorApi } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const router = useRouter();
-  const { setRoles } = useAppContext();
+  const setRoles = useAppStore((state) => state.setRoles);
+  const setSocket = useAppStore((state) => state.setSocket);
   const searchParams = useSearchParams();
   const clearToken = searchParams.get("clearToken");
   const form = useForm<LoginBodyType>({
@@ -41,6 +42,7 @@ export default function LoginForm() {
         description: result.payload.message,
       });
       setRoles(result.payload.data.account.role);
+      setSocket(getConnectSocketInstan(result.payload.data.accessToken));
       router.push("/");
     } catch (error: any) {
       handleErrorApi({
