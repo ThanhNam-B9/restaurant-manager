@@ -19,6 +19,8 @@ import { getConnectSocketInstan, handleErrorApi } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useAppStore } from "@/components/app-provider";
+import evnClientConfig from "@/config";
+import Link from "next/link";
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
@@ -51,6 +53,24 @@ export default function LoginForm() {
       });
     }
   };
+  const getOauthGoogleUrl = () => {
+    const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const options = {
+      redirect_uri: "http://localhost:4000/auth/login/google",
+      client_id:
+        "686716462207-h69qlhobld0trljtavreck1vlmst37cn.apps.googleusercontent.com",
+      access_type: "offline",
+      response_type: "code",
+      prompt: "consent",
+      scope: [
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+      ].join(" "),
+    };
+    const qs = new URLSearchParams(options);
+    return `${rootUrl}?${qs.toString()}`;
+  };
+  const googleOauthUrl = getOauthGoogleUrl();
   useEffect(() => {
     if (clearToken) {
       setRoles();
@@ -116,9 +136,11 @@ export default function LoginForm() {
               <Button type="submit" className="w-full">
                 Đăng nhập
               </Button>
-              <Button variant="outline" className="w-full" type="button">
-                Đăng nhập bằng Google
-              </Button>
+              <Link href={googleOauthUrl}>
+                <Button variant="outline" className="w-full" type="button">
+                  Đăng nhập bằng Google
+                </Button>
+              </Link>
             </div>
           </form>
         </Form>

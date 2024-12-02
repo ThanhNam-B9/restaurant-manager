@@ -75,6 +75,13 @@ export const getRefreshTokenFromLocalStorage = () =>
 export const setAccessTokenToLocalStorage = (accessToken: string) =>
   isBrowser && localStorage.setItem("accessToken", accessToken);
 
+export const setAccessTokenAndRefreshTokenToLocalStorage = (token: {
+  refreshToken: string;
+  accessToken: string;
+}) => {
+  isBrowser && localStorage.setItem("refreshToken", token.refreshToken);
+  isBrowser && localStorage.setItem("accessToken", token.accessToken);
+};
 export const setRefreshTokenToLocalStorage = (refreshToken: string) =>
   isBrowser && localStorage.setItem("refreshToken", refreshToken);
 export const checkAndRefreshToken = async (params?: {

@@ -1,7 +1,11 @@
 "use client";
 import { useAppStore } from "@/components/app-provider";
 import { toast } from "@/components/ui/use-toast";
-import { decodeToken, getConnectSocketInstan } from "@/lib/utils";
+import {
+  decodeToken,
+  getConnectSocketInstan,
+  setAccessTokenAndRefreshTokenToLocalStorage,
+} from "@/lib/utils";
 import { useOauthLoginMutation } from "@/queries/useOauth";
 
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,7 +34,6 @@ function LoginAuthGGPage() {
         });
         countRef.current++;
       } else {
-        console.log("sss");
         if (countRef.current === 0) {
           const timeout = setTimeout(() => {
             toast({

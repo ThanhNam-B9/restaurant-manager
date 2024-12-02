@@ -2,6 +2,7 @@ import evnClientConfig from "@/config";
 import {
   normalizePath,
   removeAccessAndRefreshTokenInLocalStorage,
+  setAccessTokenAndRefreshTokenToLocalStorage,
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage,
 } from "@/lib/utils";
@@ -110,6 +111,7 @@ const request = async <Response>(
     status: res.status,
     payload,
   };
+
   // Interceptor là nời chúng ta xử lý request và response trước khi trả về cho phía component
   if (!res.ok) {
     if (res.status === ENTITY_ERROR_STATUS) {
@@ -121,8 +123,6 @@ const request = async <Response>(
       );
     } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
       if (isClient) {
-        console.log("1");
-
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch("/api/auth/logout", {
             method: "POST",
@@ -145,8 +145,6 @@ const request = async <Response>(
           }
         }
       } else {
-        console.log("2");
-
         const accessToken = (options?.headers as any)?.Authorization.split(
           "Bearer "
         )[1];
@@ -163,6 +161,12 @@ const request = async <Response>(
       const { accessToken, refreshToken } = (payload as LoginResType).data;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
+    } else if (["api/auth/token"].includes(normalizeUrl)) {
+      const token = payload as {
+        accessToken: string;
+        refreshToken: string;
+      };
+      setAccessTokenAndRefreshTokenToLocalStorage(token);
     } else if (normalizeUrl === "api/auth/logout") {
       removeAccessAndRefreshTokenInLocalStorage();
     }

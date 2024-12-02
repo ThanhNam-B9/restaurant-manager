@@ -30,6 +30,7 @@ function Logout() {
           ref.current = null;
         });
         setRoles();
+        console.log("abc");
         router.push("/login");
       });
     } else {

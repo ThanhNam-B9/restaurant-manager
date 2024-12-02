@@ -19,7 +19,6 @@ function ListenLogoutSocket() {
 
   useEffect(() => {
     if (UAUTHENTICATED_PATH.includes(pathNameUrl) || isPending) return;
-    console.log(1);
 
     async function onLogoutSocket() {
       try {

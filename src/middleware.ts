@@ -6,6 +6,7 @@ const managePaths = ["/manage"];
 const guestPaths = ["/guest"];
 const privatePaths = [...managePaths, ...guestPaths];
 const authPaths = ["/login", "/register"];
+const onlyOwnerPaths = ["/manage/accounts"];
 
 const productEditRegex = /^\/products\/\d+\/edit$/;
 export function middleware(request: NextRequest) {
@@ -42,7 +43,9 @@ export function middleware(request: NextRequest) {
     const isNotGuestGoToPathUrl =
       role !== Role.Guest &&
       guestPaths.some((path) => pathname.startsWith(path));
-    if (isGuestGotoPathUrl || isNotGuestGoToPathUrl) {
+    const isNotOwnerGotoPathUrl =
+      role !== Role.Owner && onlyOwnerPaths.some((path) => pathname === path);
+    if (isGuestGotoPathUrl || isNotGuestGoToPathUrl || isNotOwnerGotoPathUrl) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
