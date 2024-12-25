@@ -56,9 +56,8 @@ export default function LoginForm() {
   const getOauthGoogleUrl = () => {
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
-      redirect_uri: "http://localhost:4000/auth/login/google",
-      client_id:
-        "686716462207-h69qlhobld0trljtavreck1vlmst37cn.apps.googleusercontent.com",
+      redirect_uri: evnClientConfig.NEXT_PUBLIC_GOOGLE_AUTHORIZED_REDIRECT_URI,
+      client_id: evnClientConfig.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       access_type: "offline",
       response_type: "code",
       prompt: "consent",
@@ -70,6 +69,12 @@ export default function LoginForm() {
     const qs = new URLSearchParams(options);
     return `${rootUrl}?${qs.toString()}`;
   };
+  console.log(
+    "abc",
+    evnClientConfig.NEXT_PUBLIC_GOOGLE_AUTHORIZED_REDIRECT_URI,
+    "ssss",
+    evnClientConfig.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+  );
   const googleOauthUrl = getOauthGoogleUrl();
   useEffect(() => {
     if (clearToken) {
