@@ -9,6 +9,7 @@ export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <div className="flex min-h-screen w-full flex-col relative">

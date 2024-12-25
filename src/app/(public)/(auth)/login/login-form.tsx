@@ -33,7 +33,7 @@ export default function LoginForm() {
     resolver: zodResolver(LoginBody),
     defaultValues: {
       email: "admin@order.com",
-      password: "1234567",
+      password: "123456",
     },
   });
   const onSubmit = async (data: LoginBodyType) => {
