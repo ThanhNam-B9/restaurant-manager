@@ -216,6 +216,7 @@ export default function TableTable() {
     pageIndex, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE, //default page size
   });
+  console.log("data", data);
 
   const table = useReactTable({
     data,
