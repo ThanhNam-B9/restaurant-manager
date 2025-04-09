@@ -9,6 +9,9 @@ export async function POST(request: Request) {
   const body = (await request.json()) as LoginBodyType;
   try {
     const { payload } = await authApiRequest.slogin(body);
+    console.log("====================================");
+    console.log(payload);
+    console.log("====================================");
     const { accessToken, refreshToken } = payload.data;
     const { exp: expAccestoken } = decode(accessToken) as { exp: number };
     const { exp: expRefreshToken } = decode(refreshToken) as { exp: number };

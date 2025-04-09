@@ -27,9 +27,12 @@ function LoginAuthGGPage() {
     if (countRef.current === 0) {
       if (accessToken && refreshToken) {
         mutateAsync({ accessToken, refreshToken }).then((data) => {
+          console.log("data", data);
+
           const { role } = decodeToken(data.payload.refreshToken);
           setRoles(role);
           setSocket(getConnectSocketInstan(data.payload.refreshToken));
+
           router.push("/manage/orders");
         });
         countRef.current++;

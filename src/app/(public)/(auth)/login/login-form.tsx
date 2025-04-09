@@ -39,6 +39,8 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;
     try {
+      console.log("kq");
+
       const result = await loginMutation.mutateAsync(data);
       toast({
         description: result.payload.message,
@@ -69,12 +71,7 @@ export default function LoginForm() {
     const qs = new URLSearchParams(options);
     return `${rootUrl}?${qs.toString()}`;
   };
-  console.log(
-    "abc",
-    evnClientConfig.NEXT_PUBLIC_GOOGLE_AUTHORIZED_REDIRECT_URI,
-    "ssss",
-    evnClientConfig.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-  );
+
   const googleOauthUrl = getOauthGoogleUrl();
   useEffect(() => {
     if (clearToken) {

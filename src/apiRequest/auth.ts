@@ -16,6 +16,7 @@ const authApiRequest = {
     http.post<LoginResType>("/api/auth/login", body, {
       baseUrl: "",
     }),
+
   slogout: (
     body: LogoutBodyType & {
       accessToken: string;
@@ -33,6 +34,7 @@ const authApiRequest = {
         },
       }
     ),
+
   logout: () =>
     http.post<{ message: string }>("/api/auth/logout", null, {
       baseUrl: "",
